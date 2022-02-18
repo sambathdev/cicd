@@ -49,10 +49,10 @@ jobs:
 
       # Runs a set of commands using the runners shell
       - name: Deploy application's ${{env.STAGING_NAME}} to server
-        uses: garygrossgarten/github-action-ssh@release
+        uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.SSH_HOST }}
-          key: ${{ secrets.SSH_KEY }}
+          privateKey: ${{ secrets.SSH_KEY }}
           username: ${{ secrets.SSH_USERNAME }}
           script: |
             export NVM_DIR="$HOME/.nvm"
