@@ -8,7 +8,7 @@ env:
   NODE_VERSION: 16.13.0
   NOW: $(date +'%Y-%m-%d-%H:%M')
   DIR: index.js
-  URL: git@github.com:sambathdev/cicd.git
+  URL: https://github.com/sambathdev/cicd.git
 
 # Controls when the workflow will run
 on:
