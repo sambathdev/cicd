@@ -49,7 +49,7 @@ jobs:
 
       # Runs a set of commands using the runners shell
       - name: Deploy application's ${{env.STAGING_NAME}} to server
-        uses: final/ssh-action@master
+        uses: fifsky/ssh-action@master
         with:
           host: ${{ secrets.SSH_HOST }}
           key: ${{ secrets.SSH_KEY }}
