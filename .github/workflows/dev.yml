@@ -1,0 +1,71 @@
+# This is a basic workflow to help you get started with Actions
+
+name: Development Environment
+
+# Declare Environment Variable
+env:
+  STAGING_NAME: dev
+  NODE_VERSION: 16.13.0
+  NOW: $(date +'%Y-%m-%d-%H:%M')
+  DIR: index.js
+  URL: git@github.com:sambathdev/cicd.git
+
+# Controls when the workflow will run
+on:
+  # Triggers the workflow on push or pull request events but only for the develop branch
+  pull_request:
+    branches: [develop]
+    types: [closed]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  build:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      - name: Folder-Name
+        run: echo "${{ github.event.repository.name }}-${{env.STAGING_NAME}}-${{env.NOW}}"
+
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: ${{env.NODE_VERSION}}
+
+      # Runs a single command using the runners shell
+      - name: Run script for install modules
+        run: npm install --save-dev
+
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: ${{env.NODE_VERSION}}
+
+      # Runs a set of commands using the runners shell
+      - name: Deploy application's ${{env.STAGING_NAME}} to server
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          key: ${{ secrets.SSH_KEY }}
+          username: ${{ secrets.SSH_USERNAME }}
+          script: |
+            export NVM_DIR="$HOME/.nvm"
+            [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+            nvm install ${{env.NODE_VERSION}}
+            node -v
+            npm install pm2 -g
+            cd ~
+            git clone ${{env.URL}} ${{ github.event.repository.name }}-${{env.STAGING_NAME}}-${{env.NOW}}
+            cd ${{ github.event.repository.name }}-${{env.STAGING_NAME}}-${{env.NOW}}
+            npm install --save-dev
+            pm2 delete ${{ github.event.repository.name }}-${{ env.STAGING_NAME }}
+            pm2 start ${{ env.DIR }} --name=${{ github.event.repository.name }}-${{ env.STAGING_NAME }}
+            pm2 list
+            echo "Deployment successfully on ${{env.STAGING_NAME}} Environment"
