@@ -8,7 +8,6 @@ env:
   NODE_VERSION: 16.13.0
   NOW: $(date +'%Y-%m-%d-%H:%M')
   DIR: index.js
-  URL: https://github.com/sambathdev/cicd.git
 
 # Controls when the workflow will run
 on:
@@ -61,7 +60,7 @@ jobs:
             node -v
             npm install pm2 -g
             cd ~
-            git clone ${{env.URL}} ${{ github.event.repository.name }}-${{env.STAGING_NAME}}-${{env.NOW}}
+            git clone https://github.com/sambathdev/cicd.git ${{ github.event.repository.name }}-${{env.STAGING_NAME}}-${{env.NOW}}
             cd ${{ github.event.repository.name }}-${{env.STAGING_NAME}}-${{env.NOW}}
             npm install --save-dev
             pm2 delete ${{ github.event.repository.name }}-${{ env.STAGING_NAME }}
